@@ -55,7 +55,10 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }]
-})
+},
+    {
+        timestamps: true
+    })
 
 
 // Virtual Arguments! This reference is not stored in the db.. we are not storing in the User collection the tasks!
