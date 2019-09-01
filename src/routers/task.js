@@ -50,7 +50,7 @@ router.get('/tasks', auth, async (req, res) => {
             // Primeira coisa: separar as duas partes - createdAt e asc/desc
             const parts = req.query.sortBy.split(':')
             // Aqui criamos uma propriedado para o object sort (que estava vazio!): fica entao sort.createdAt (usando o elemento 0 do array)
-            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1 // Terany operation!
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1 // Ternary operation!
             // Depois damos o valor de -1 ou 1 a este sort.createdAt, dependendo de desc ou asc. 
             // NOTA: Isto deve ter a ver com as definicoes dos queries. o -1 Significa desc, e o asc significa 1
         }
