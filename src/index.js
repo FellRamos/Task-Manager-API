@@ -18,8 +18,28 @@ const port = process.env.PORT || 3000
 
 // Testing Multer
 const multer = require('multer')
+
+// Here we can configure molter
+// FileSize - In bytes
 const upload = multer({
-    dest: 'images'
+    dest: 'images',
+    limits: {
+        fileSize: 1000000,
+    },
+    fileFilter(req, file, cb) {
+
+        //if (!file.originalname.endsWith('.pdf')) {
+        // With Regular Expressions:
+        if (!file.originalname.match(/\.(doc|docx)$/)) {
+            // If something is wrong, the first argument, error, is called
+            return cb(new Error('File must be a PDF'))
+        }
+
+        // If is ok, the first argument, error, is undefined (or null?)
+        cb(undefined, true)
+
+
+    }
 })
 
 app.post('/upload', upload.single('uploadFile'), (req, res) => {
