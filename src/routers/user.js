@@ -1,7 +1,9 @@
 const express = require('express')
+const multer = require('multer')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const router = new express.Router()
+
 
 
 router.post('/users', async (req, res) => {
@@ -104,6 +106,21 @@ router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.remove()
         res.send(req.user)
+    } catch (e) {
+        res.status(500).send(e.message)
+    }
+
+})
+
+// Creating Upload with the destination
+const upload = multer({
+    dest: 'avatars'
+})
+
+router.post('/users/me/avatar', upload.single('avatar'), async (req, res) => {
+
+    try {
+        res.send()
     } catch (e) {
         res.status(500).send(e.message)
     }

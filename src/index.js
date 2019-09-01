@@ -1,13 +1,9 @@
 const express = require('express')
 const chalk = require('chalk')
 require('./db/mongoose') // To ensure mongoose connects to DB. not needed to store it in a var.
-// Models
-const User = require('./models/user')
-const Task = require('./models/task')
 // Routers
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
-
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -19,6 +15,16 @@ const port = process.env.PORT || 3000
 //     // As I send the response, I don't need to use next()
 // })
 
+
+// Testing Multer
+const multer = require('multer')
+const upload = multer({
+    dest: 'images'
+})
+
+app.post('/upload', upload.single('uploadFile'), (req, res) => {
+    res.send()
+})
 
 // Handling Routers
 app.use(express.json())
