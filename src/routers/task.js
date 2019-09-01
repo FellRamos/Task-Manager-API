@@ -20,6 +20,8 @@ router.post('/tasks', auth, async (req, res) => {
 
 })
 
+
+// GET /tasks?completed=true/false
 router.get('/tasks', auth, async (req, res) => {
 
     try {
@@ -31,7 +33,18 @@ router.get('/tasks', auth, async (req, res) => {
          *  Outra maneira de fazer o que esta acima:
          */
 
-        await req.user.populate('tasks').execPopulate() // Usando o atributo Virtual do User model!
+        const match = {}
+
+        if (req.query.completed) {
+            // O resultado do req.query é um string. Aqui desta forma, estamos a avaliar se req.query.completed é igual a true ou nao, e isto sim,
+            // vai-nos dar um Boolean!
+            match.completed = req.query.completed.toLowerCase() === 'true'
+        }
+
+        await req.user.populate({
+            path: 'tasks',
+            match
+        }).execPopulate() // Usando o atributo Virtual do User model!
         res.send(req.user.tasks)
 
     } catch (error) {
