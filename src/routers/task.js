@@ -22,6 +22,7 @@ router.post('/tasks', auth, async (req, res) => {
 
 
 // GET /tasks?completed=true/false
+// GEt /tasks?limit=10/20/50..&skip=0(doesn't skip results),10(skip 10 first results)
 router.get('/tasks', auth, async (req, res) => {
 
     try {
@@ -43,7 +44,11 @@ router.get('/tasks', auth, async (req, res) => {
 
         await req.user.populate({
             path: 'tasks',
-            match
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            }
         }).execPopulate() // Usando o atributo Virtual do User model!
         res.send(req.user.tasks)
 
