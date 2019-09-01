@@ -42,8 +42,12 @@ const upload = multer({
     }
 })
 
-app.post('/upload', upload.single('uploadFile'), (req, res) => {
+app.post('/upload', upload.single('upload'), (req, res) => {
     res.send()
+    // In this case, we added a 4th argument, a new CB Function!
+    // This function will handle the errors and has the following signature!
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
 })
 
 // Handling Routers

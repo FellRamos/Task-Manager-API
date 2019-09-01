@@ -114,7 +114,19 @@ router.delete('/users/me', auth, async (req, res) => {
 
 // Creating Upload with the destination
 const upload = multer({
-    dest: 'avatars'
+    dest: 'avatars',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload a jpg/jpeg/png file'))
+        }
+
+        cb(null, true) // Null also works, I think I used more this one.
+
+    }
 })
 
 router.post('/users/me/avatar', upload.single('avatar'), async (req, res) => {
@@ -124,6 +136,13 @@ router.post('/users/me/avatar', upload.single('avatar'), async (req, res) => {
     } catch (e) {
         res.status(500).send(e.message)
     }
+
+    // In this case, we added a 4th argument, a new CB Function!
+    // This function will handle the errors and has the following signature!
+
+}, (error, req, res, next) => {
+
+    res.status(400).send({ error: error.message })
 
 })
 
