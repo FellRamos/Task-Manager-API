@@ -1,5 +1,6 @@
 const express = require('express')
 const multer = require('multer')
+const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const router = new express.Router()
@@ -130,7 +131,12 @@ const upload = multer({
 })
 
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    req.user.avatar = req.file.buffer
+
+    // Using sharp to convert images - Taking the image(req.file.buffer) and tranforming it
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+
+    // Now we use this buffer variable - The image already treated
+    req.user.avatar = buffer
     await req.user.save()
     res.send()
 
