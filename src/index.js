@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const chalk = require('chalk')
 require('./db/mongoose') // To ensure mongoose connects to DB. not needed to store it in a var.
@@ -8,7 +9,7 @@ const taskRouter = require('./routers/task')
 
 // Initializing Express and setting the PORT
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT
 
 // Handling Routers
 app.use(express.json())
