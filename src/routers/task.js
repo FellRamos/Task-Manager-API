@@ -23,6 +23,7 @@ router.post('/tasks', auth, async (req, res) => {
 
 // GET /tasks?completed=true/false
 // GEt /tasks?limit=10/20/50..&skip=0(doesn't skip results),10(skip 10 first results)
+// GET /tasks?sortBy=createdAt_asc or createdAt:desc
 router.get('/tasks', auth, async (req, res) => {
 
     try {
@@ -35,11 +36,23 @@ router.get('/tasks', auth, async (req, res) => {
          */
 
         const match = {}
+        const sort = {}
 
+        // If req.query.completed is provided:
         if (req.query.completed) {
             // O resultado do req.query é um string. Aqui desta forma, estamos a avaliar se req.query.completed é igual a true ou nao, e isto sim,
             // vai-nos dar um Boolean!
             match.completed = req.query.completed.toLowerCase() === 'true'
+        }
+
+        // If req.query.sortBy is provided:
+        if (req.query.sortBy) {
+            // Primeira coisa: separar as duas partes - createdAt e asc/desc
+            const parts = req.query.sortBy.split(':')
+            // Aqui criamos uma propriedado para o object sort (que estava vazio!): fica entao sort.createdAt (usando o elemento 0 do array)
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1 // Terany operation!
+            // Depois damos o valor de -1 ou 1 a este sort.createdAt, dependendo de desc ou asc. 
+            // NOTA: Isto deve ter a ver com as definicoes dos queries. o -1 Significa desc, e o asc significa 1
         }
 
         await req.user.populate({
@@ -47,7 +60,8 @@ router.get('/tasks', auth, async (req, res) => {
             match,
             options: {
                 limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip)
+                skip: parseInt(req.query.skip),
+                sort
             }
         }).execPopulate() // Usando o atributo Virtual do User model!
         res.send(req.user.tasks)
